@@ -1,0 +1,27 @@
+- name: play one
+   hosts: localhost
+   connection: local
+   become: yes
+   tasks:
+      - name: install nginx
+        yum:
+          name: nginx
+          state: present
+      - name: start nginx
+        service:
+           name: nginx
+           state: started
+      - name: enable nginx
+        service:
+           name: nginx
+           enabled: true
+      - name: restart nginx
+        service:
+           name: nginx
+           state: restarted
+
+
+Nano myhosts.ini
+[localhost]
+127.0.0.1
+ansible-playbook -i myhost.ini httpwala.yaml

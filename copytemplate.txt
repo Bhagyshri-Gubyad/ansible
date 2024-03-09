@@ -1,0 +1,117 @@
+
+- name: installing lamp
+
+  hosts: webserver
+
+  become: yes
+
+  vars:
+
+     nginx_port: 90
+
+     root_path: /usr/share/nginx/mywebsite
+
+  tasks:
+
+     - name: install all softwares
+
+       yum:
+
+         name: "{{ item }}"
+
+         state: present
+
+       with_items:
+
+         - nginx
+
+         - php
+
+         - mariadb105-server
+
+     - name: start all softwares
+
+       service:
+
+         name: "{{ item }}"
+
+         state: started
+
+       with_items:
+
+         - nginx
+
+         - php-fpm
+
+         - mariadb
+
+     - name: create directory
+
+       file:
+
+         path: /usr/share/nginx/mywebsite
+
+         state: directory
+ 
+     - name: copy index.html
+
+       copy:
+
+           src: ./index.html
+
+           dest: /usr/share/nginx/mywebsite/index.html
+
+     - name: copytemplate
+
+       template:
+
+           src: ./myconfig.conf.j2
+
+           dest: /etc/nginx/nginx.conf
+
+       notify: reload nginx
+ 
+  handlers:
+
+    - name: reload nginx
+
+      service:
+
+         name: nginx
+
+         state: reloaded
+
+***
+copy default config file nd make htis changes in server blk
+
+
+server {
+
+        listen       {{ nginx_port  }};
+
+        listen       [::]:{{ nginx_port  }};
+
+        server_name  _;
+
+        root         {{ root_path }};
+ 
+        # Load configuration files for the default server block.
+
+        include /etc/nginx/default.d/*.conf;
+ 
+        error_page 404 /404.html;
+
+        location = /404.html {
+
+        }
+ 
+        error_page 500 502 503 504 /50x.html;
+
+        location = /50x.html {
+
+        }
+
+    }
+
+
+nginx config with jinja2 variables

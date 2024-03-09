@@ -1,0 +1,16 @@
+- name: installing lamp
+  hosts: localhost
+  connection: local
+  become: yes
+  vars_files:
+    - vars.yml
+  tasks:
+     - name: install all softwares
+       debug:
+           msg: "{{my_password}}"
+
+ansible-vault encrypt vars.yml
+ansible-playbook -i myhost.ini debugwala.yml --ask-vault-pass
+ansible-vault decrypt vars.yml
+edit and rekey vars.yml
+

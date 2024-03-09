@@ -1,0 +1,29 @@
+[localhost]
+127.0.0.1
+ 
+[webserver]
+172.31.38.83 ansible_ssh_user=ec2-user ansible_ssh_private_key_file=Jenkins.pem
+172.31.40.228 ansible_ssh_user=ec2-user ansible_ssh_private_key_file=Jenkins.pem
+
+
+- name: install lamp
+  hosts: webserver
+  become: yes
+  tasks:
+     - name: install all softwares
+       yum:
+         name: "{{ item }}"
+         state: present
+       with_items:
+         - nginx
+         - php
+         - mariadb105-server
+     - name: start all softwares
+       service:
+         name: "{{ item }}"
+         state: started
+       with_items:
+         - nginx
+         - php-fpm
+         - mariadb
+ 
